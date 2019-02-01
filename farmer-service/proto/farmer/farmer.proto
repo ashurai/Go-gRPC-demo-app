@@ -1,0 +1,34 @@
+// farmer-service/proto/farmer/farmer.proto
+
+syntax = "proto3";
+
+package fap.micro.srv.farmer;
+
+service FarmerService {
+    rpc CreateFarmer(Farmer) returns (Response) {}
+}
+
+message Farmer {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    string password = 4;
+    bool isEnabled = 5;
+    string createdAt = 6;
+    string updatedAt = 7;
+    repeated Image image = 8;
+    bool isConfirmed = 9;
+    bool isVerified = 10;
+}
+
+message Image {
+    string id = 1;
+    string path = 2;
+    string type = 3;
+    int32  order = 4;
+}
+
+message Response {
+    bool created = 1;
+    Farmer farmer = 2;
+}
