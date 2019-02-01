@@ -6,6 +6,8 @@ package fap.micro.srv.farmer;
 
 service FarmerService {
     rpc CreateFarmer(Farmer) returns (Response) {}
+
+    rpc GetFarmer(GetRequest) returns (Response){}
 }
 
 message Farmer {
@@ -28,7 +30,11 @@ message Image {
     int32  order = 4;
 }
 
+message GetRequest{}
+
 message Response {
     bool created = 1;
     Farmer farmer = 2;
+
+    repeated Farmer farmers = 3;
 }

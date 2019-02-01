@@ -1,0 +1,17 @@
+{
+    "name":     "Ashutosh Rai",
+    "email":    "dev.ashurai@gmail.com",
+    "password": "Rai12345",
+    "isEnabled": true,
+    "createdAt": "01/02/2019 01:05:10",
+    "updatedAt": "01/02/2019 01:05:10",
+    "images": [
+        {
+            "path": "/public/farmer/images/",
+            "type": "JPEG",
+            "order": 3    
+        }
+    ],
+    "isConfirmed": true,
+    "isVerified": false
+}

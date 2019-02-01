@@ -16,6 +16,7 @@ const (
 
 type IRepository interface {
 	Create(*pb.Farmer) (*pb.Farmer, error)
+	GetAll() []*pb.Farmer
 }
 
 type Repository struct {
@@ -26,6 +27,10 @@ func (repo *Repository) Create(farmer *pb.Farmer) (*pb.Farmer, error) {
 	updated := append(repo.farmer, farmer)
 	repo.farmer = updated
 	return farmer, nil
+}
+
+func (repo *Repository) GetAll() []*pb.Farmer {
+	return repo.farmer
 }
 
 type service struct {
@@ -39,6 +44,11 @@ func (s *service) CreateFarmer(ctx context.Context, req *pb.Farmer) (*pb.Respons
 	}
 
 	return &pb.Response{Created: true, Farmer: farmer}, nil
+}
+
+func (s *service) GetFarmer(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
+	farmer := s.repo.GetAll()
+	return &pb.Response{Farmers: farmer}, nil
 }
 
 func main() {
