@@ -21,6 +21,7 @@ message Farmer {
     repeated Image image = 8;
     bool isConfirmed = 9;
     bool isVerified = 10;
+    int32 quantity = 11;
 }
 
 message Image {

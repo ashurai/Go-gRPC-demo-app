@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"net"
 
 	pb "github.com/ashurai/fap-back/farmer-service/proto/farmer"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	productpb "github.com/ashurai/fap-back/product-service/proto/product"
+	micro "github.com/micro/go-micro"
 )
 
 const (
@@ -20,7 +20,8 @@ type IRepository interface {
 }
 
 type Repository struct {
-	farmer []*pb.Farmer
+	farmer  []*pb.Farmer
+	product productpb.ProductServiceClient
 }
 
 func (repo *Repository) Create(farmer *pb.Farmer) (*pb.Farmer, error) {
@@ -34,36 +35,53 @@ func (repo *Repository) GetAll() []*pb.Farmer {
 }
 
 type service struct {
-	repo IRepository
+	repo          IRepository
+	productClient productpb.ProductServiceClient
 }
 
-func (s *service) CreateFarmer(ctx context.Context, req *pb.Farmer) (*pb.Response, error) {
+func (s *service) CreateFarmer(ctx context.Context, req *pb.Farmer, res *pb.Response) error {
+	productResponse, err := s.productClient.FindFarmerProduct(context.Background(), &productpb.QueryParams{
+		FarmerId: req.Id,
+		Quantity: req.Quantity,
+	})
+
+	log.Printf("Found available product: %v", productResponse.Product.Name)
+
+	if err != nil {
+		return err
+	}
+	req.Id = productResponse.Product.Id
 	farmer, err := s.repo.Create(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &pb.Response{Created: true, Farmer: farmer}, nil
+	res.Created = true
+	res.Farmer = farmer
+	return nil
 }
 
-func (s *service) GetFarmer(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
+func (s *service) GetFarmer(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
 	farmer := s.repo.GetAll()
-	return &pb.Response{Farmers: farmer}, nil
+
+	res.Farmers = farmer
+	return nil
 }
 
 func main() {
 	repo := &Repository{}
 
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
+	srvr := micro.NewService(
+		micro.Name("go.micro.srv.farmer"),
+		micro.Version("latest"),
+	)
 
-	s := grpc.NewServer()
-	pb.RegisterFarmerServiceServer(s, &service{repo})
+	productClient := productpb.NewProductServiceClient("go.micro.srv.product", srvr.Client())
+	srvr.Init()
 
-	reflection.Register(s)
-	if err := s.Serve(lis); err != nil {
-		log.Fatal("failed to serve: %v", err)
+	pb.RegisterFarmerServiceHandler(srvr.Server(), &service{repo, productClient})
+	// Run the server
+	if err := srvr.Run(); err != nil {
+		fmt.Println(err)
 	}
 }

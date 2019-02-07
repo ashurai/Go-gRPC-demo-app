@@ -8,7 +8,8 @@ import (
 	"os"
 
 	pb "github.com/ashurai/fap-back/farmer-service/proto/farmer"
-	"google.golang.org/grpc"
+	microclient "github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/cmd"
 )
 
 const (
@@ -28,12 +29,14 @@ func parseFile(file string) (*pb.Farmer, error) {
 
 func main() {
 	// Connecting to the server
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewFarmerServiceClient(conn)
+	// conn, err := grpc.Dial(address, grpc.WithInsecure())
+	// if err != nil {
+	//	log.Fatalf("Did not connect: %v", err)
+	// }
+	// defer conn.Close()
+	cmd.Init()
+
+	client := pb.NewFarmerServiceClient("go.micro.srv.farmer", microclient.DefaultClient)
 
 	file := defaultFileName
 	if len(os.Args) > 1 {

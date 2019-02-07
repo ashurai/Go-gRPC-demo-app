@@ -44,6 +44,7 @@ func (s *service) FindFarmerProduct(ctx context.Context, req *pb.QueryParams, re
 func main() {
 	products := []*pb.Product{
 		&pb.Product{Id: "abc123", Name: "Tomoto", Available: 6, Quantity: 70, FarmerId: "ddfcb"},
+		&pb.Product{Id: "abc234", Name: "Tomoto1", Available: 4, Quantity: 10, FarmerId: "cfcdd"},
 	}
 
 	repo := &ProductRepository{products}
