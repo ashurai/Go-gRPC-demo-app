@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package fap.micro.srv.farmer;
+package go.micro.srv.farmer;
 
 service FarmerService {
     rpc CreateFarmer(Farmer) returns (Response) {}
