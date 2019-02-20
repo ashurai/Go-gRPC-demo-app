@@ -8,7 +8,7 @@ import (
 // Repository to user manage user interface
 type Repository interface {
 	GetAll() ([]*pb.User, error)
-	Get(id string) (pb.User, error)
+	Get(id string) (*pb.User, error)
 	Create(user *pb.User) error
 	GetByEmailAndPassword(user *pb.User) (*pb.User, error)
 }
@@ -39,8 +39,8 @@ func (repo *UserRepository) Get(id string) (*pb.User, error) {
 
 // GetByEmailAndPassword to validate users
 func (repo *UserRepository) GetByEmailAndPassword(user *pb.User) (*pb.User, error) {
-	if repo.db.First(&user).Error; err != nil {
-		return nil, error
+	if err := repo.db.First(&user).Error; err != nil {
+		return nil, err
 	}
 	return user, nil
 }
@@ -50,4 +50,6 @@ func (repo *UserRepository) Create(user *pb.User) error {
 	if err := repo.db.Create(user).Error; err != nil {
 		return err
 	}
+
+	return nil
 }

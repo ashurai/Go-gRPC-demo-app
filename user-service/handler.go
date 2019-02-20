@@ -7,8 +7,7 @@ import (
 )
 
 type service struct {
-	repo         Repository
-	tokenService Authable
+	repo Repository
 }
 
 func (srv *service) Get(ctx context.Context, req *pb.User, res *pb.Response) error {
@@ -17,5 +16,38 @@ func (srv *service) Get(ctx context.Context, req *pb.User, res *pb.Response) err
 		return err
 	}
 	res.User = user
+	return nil
+}
+
+func (srv *service) GetAll(ctx context.Context, req *pb.Request, res *pb.Response) error {
+	users, err := srv.repo.GetAll()
+	if err != nil {
+		return err
+	}
+	res.Users = users
+	return nil
+}
+
+func (srv *service) Auth(ctx context.Context, req *pb.User, res *pb.Token) error {
+	_, err := srv.repo.GetByEmailAndPassword(req)
+	if err != nil {
+		return nil
+	}
+	res.Token = "testingabc"
+	return nil
+}
+
+func (srv *service) Create(ctx context.Context, req *pb.User, res *pb.Response) error {
+	if err := srv.repo.Create(req); err != nil {
+		return err
+	}
+	res.User = req
+	return nil
+}
+
+func (srv *service) ValidateToken(ctx context.Context, req *pb.Token, res *pb.Token) error {
+	// if err := srv.repo.ValidateToken(req); err != nil {
+	// 	return err
+	// }
 	return nil
 }
