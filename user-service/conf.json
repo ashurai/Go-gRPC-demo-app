@@ -4,7 +4,8 @@
         "host" : "localhost",
         "user" : "postgres",
         "DBName" : "postgres",
-        "password" : "postgres"
+        "password" : "rai@123,.",
+        "port" : "5433"
         }
     ]
 }

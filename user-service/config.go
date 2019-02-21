@@ -18,6 +18,7 @@ type dbconf struct {
 	User     string `json:"user"`
 	Name     string `json:"DBName"`
 	Password string `json:"password"`
+	Port     string `json:"port"`
 }
 
 // SetEnvVars to set all configs to the env vars
@@ -37,6 +38,7 @@ func (conf *config) SetEnvVars() error {
 	os.Setenv("DB_USER", dbc.User)
 	os.Setenv("DB_NAME", dbc.Name)
 	os.Setenv("DB_PASSWORD", dbc.Password)
+	os.Setenv("DB_PORT", dbc.Port)
 
 	return nil
 }
